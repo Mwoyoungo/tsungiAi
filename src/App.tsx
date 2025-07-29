@@ -29,7 +29,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="actuarial-edge-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="tsungi-ai-theme">
         <AuthProvider>
           <TooltipProvider>
             <Toaster />

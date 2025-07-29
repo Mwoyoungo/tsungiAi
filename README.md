@@ -1,73 +1,65 @@
-# Welcome to your Lovable project
+# TsungiAI 😊 - Smart Learning Assistant
 
-## Project info
+Welcome to **TsungiAI**, your intelligent companion for actuarial studies! 
 
-**URL**: https://lovable.dev/projects/2f6f4c76-1896-4363-9632-be087d1951bc
+## 🚀 Features
 
-## How can I edit this code?
+- **🤖 Smart Acronym Generator**: AI-powered acronym creation for complex actuarial concepts
+- **🎧 Audio Learning**: Interactive audio lessons and learning materials  
+- **💫 Beautiful UI**: Neumorphic design with smooth animations
+- **🧠 AI Integration**: Powered by advanced AI models for intelligent learning assistance
+- **📱 Responsive Design**: Works seamlessly on desktop and mobile devices
 
-There are several ways of editing your application.
+## 🛠️ Technologies
 
-**Use Lovable**
+This project is built with modern web technologies:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2f6f4c76-1896-4363-9632-be087d1951bc) and start prompting.
+- **React 18** - Modern UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Lightning-fast build tool
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Beautiful component library
+- **Supabase** - Backend as a Service
+- **Flowise AI** - AI workflow integration
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🏃‍♂️ Quick Start
 
-**Use your preferred IDE**
+```bash
+# Clone the repository
+git clone https://github.com/Mwoyoungo/tsungiAi.git
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+# Navigate to project directory
+cd tsungiAi
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Install dependencies
+npm install
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 📚 Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. **Audio Learning**: Access curated audio content for actuarial studies
+2. **Acronym Generator**: Input complex topics and get memorable acronyms
+3. **AI Chat**: Use the integrated chatbot for learning assistance
 
-**Use GitHub Codespaces**
+## 🎨 Design System
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+TsungiAI uses a custom neumorphic design system with:
+- Dark theme optimized for extended study sessions
+- Smooth animations and transitions
+- Professional color palette
+- Responsive layouts
 
-## What technologies are used for this project?
+## 🤝 Contributing
 
-This project is built with:
+We welcome contributions! Please feel free to submit a Pull Request.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📄 License
 
-## How can I deploy this project?
+This project is licensed under the MIT License.
 
-Simply open [Lovable](https://lovable.dev/projects/2f6f4c76-1896-4363-9632-be087d1951bc) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**Made with ❤️ for actuarial students worldwide**
