@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Neumorphic color palette */
+    --background: 302 19% 90%;
+    --foreground: 0 0% 18%;
+
+    --card: 302 19% 90%;
+    --card-foreground: 0 0% 18%;
+
+    --popover: 302 19% 90%;
+    --popover-foreground: 0 0% 18%;
+
+    /* Primary: Lilac #C8A2C8 */
+    --primary: 300 17% 70%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 300 17% 80%;
+
+    /* Secondary: Muted Lavender #E6D6EB */
+    --secondary: 302 19% 87%;
+    --secondary-foreground: 0 0% 18%;
+
+    --muted: 302 19% 87%;
+    --muted-foreground: 0 0% 45%;
+
+    /* Accent: Soft Plum #A678A6 */
+    --accent: 300 17% 57%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Highlight: Iris Blue #6D7CBF */
+    --focus: 230 35% 58%;
+    --focus-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 302 19% 80%;
+    --input: 302 19% 85%;
+    --ring: 300 17% 70%;
+
+    /* Study-specific colors */
+    --progress: 142 48% 85%; /* Pale Mint #C8F2DC */
+    --warning: 30 100% 82%; /* Apricot #FFD6A5 */
+    --study-active: 230 35% 58%;
+
+    /* Neumorphic gradients */
+    --gradient-primary: linear-gradient(145deg, hsl(300, 17%, 65%), hsl(300, 17%, 75%));
+    --gradient-secondary: linear-gradient(145deg, hsl(302, 19%, 82%), hsl(302, 19%, 92%));
+    --gradient-accent: linear-gradient(145deg, hsl(300, 17%, 52%), hsl(300, 17%, 62%));
+
+    /* Neumorphic shadows */
+    --shadow-neumorph-inset: inset 8px 8px 16px hsl(302, 19%, 82%), inset -8px -8px 16px hsl(302, 19%, 98%);
+    --shadow-neumorph-outset: 8px 8px 16px hsl(302, 19%, 82%), -8px -8px 16px hsl(302, 19%, 98%);
+    --shadow-neumorph-pressed: inset 4px 4px 8px hsl(302, 19%, 82%), inset -4px -4px 8px hsl(302, 19%, 98%);
+    --shadow-card: var(--shadow-neumorph-outset);
+    --shadow-float: 12px 12px 24px hsl(302, 19%, 82%), -12px -12px 24px hsl(302, 19%, 98%);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Deep charcoal background with purple undertones */
+    --background: 260 15% 16%; /* Deep charcoal with purple hint */
+    --foreground: 300 20% 88%; /* Light lilac text */
+
+    --card: 260 20% 18%; /* Slightly purple-tinted cards */
+    --card-foreground: 300 15% 85%;
+
+    --popover: 260 18% 17%;
+    --popover-foreground: 300 18% 87%;
+
+    /* Enhanced lilac primary - more vibrant */
+    --primary: 285 60% 68%; /* Rich lilac */
+    --primary-foreground: 260 20% 12%; /* Very dark for contrast */
+    --primary-glow: 285 55% 78%;
+
+    /* Complementary teal secondary */
+    --secondary: 190 45% 42%; /* Muted teal - complements lilac */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 260 12% 22%; /* Dark purple-gray */
+    --muted-foreground: 300 12% 68%; /* Muted lilac */
+
+    /* Bright lilac accent */
+    --accent: 275 55% 65%; /* Bright lilac accent */
+    --accent-foreground: 260 20% 12%;
+
+    /* Focus remains lilac family */
+    --focus: 285 60% 68%;
+    --focus-foreground: 260 20% 12%;
+
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 15% 28%; /* Subtle purple-gray border */
+    --input: 260 18% 20%; /* Dark purple input */
+    --ring: 285 60% 68%; /* Lilac focus ring */
+    
+    /* Study colors coordinated with theme */
+    --progress: 155 50% 55%; /* Teal-green progress */
+    --warning: 35 85% 65%; /* Warm orange warning */
+    --study-active: 285 60% 68%; /* Lilac active state */
+    
+    /* Sidebar colors */
+    --sidebar-background: 260 18% 14%; /* Even darker purple sidebar */
+    --sidebar-foreground: 300 18% 85%;
+    --sidebar-primary: 285 60% 68%; /* Lilac sidebar primary */
+    --sidebar-primary-foreground: 260 20% 12%;
+    --sidebar-accent: 260 15% 24%; /* Muted purple accent */
+    --sidebar-accent-foreground: 300 18% 85%;
+    --sidebar-border: 260 15% 26%;
+    --sidebar-ring: 285 60% 68%;
+    
+    /* Refined dark mode gradients */
+    --gradient-primary: linear-gradient(145deg, hsl(285, 60%, 63%), hsl(285, 60%, 73%));
+    --gradient-secondary: linear-gradient(145deg, hsl(260, 20%, 16%), hsl(260, 20%, 22%));
+    --gradient-accent: linear-gradient(145deg, hsl(275, 55%, 60%), hsl(190, 45%, 40%));
+    
+    /* Enhanced neumorphic shadows for dark theme */
+    --shadow-neumorph-inset: inset 6px 6px 12px hsl(260, 20%, 12%), inset -6px -6px 12px hsl(260, 20%, 20%);
+    --shadow-neumorph-outset: 6px 6px 12px hsl(260, 20%, 12%), -6px -6px 12px hsl(260, 20%, 20%);
+    --shadow-neumorph-pressed: inset 3px 3px 6px hsl(260, 20%, 12%), inset -3px -3px 6px hsl(260, 20%, 20%);
+    --shadow-card: var(--shadow-neumorph-outset);
+    --shadow-float: 8px 8px 16px hsl(260, 20%, 12%), -8px -8px 16px hsl(260, 20%, 20%);
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  /* Enhanced neumorphic components */
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .shadow-card:hover {
+    box-shadow: var(--shadow-float);
+  }
+  
+  .neumorph-button {
+    background: var(--gradient-secondary);
+    box-shadow: var(--shadow-neumorph-outset);
+    transition: all 0.2s ease;
+  }
+  
+  .neumorph-button:hover {
+    box-shadow: var(--shadow-float);
+  }
+  
+  .neumorph-button:active {
+    box-shadow: var(--shadow-neumorph-pressed);
+  }
+  
+  .neumorph-inset {
+    box-shadow: var(--shadow-neumorph-inset);
+  }
+  
+  /* Gradient text animations for dark mode */
+  .gradient-text-animate {
+    background: var(--gradient-primary);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+}
