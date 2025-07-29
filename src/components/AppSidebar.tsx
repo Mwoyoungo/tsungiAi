@@ -31,16 +31,18 @@ const sidebarItems = [
     description: 'Listen & Learn'
   },
   {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    description: 'Overview & Progress'
-  },
-  {
     title: 'Acronym Generator',
     href: '/acronyms',
     icon: Lightbulb,
     description: 'Memory Aids'
+  },
+  // Hidden items - keep for future use
+  /*
+  {
+    title: 'Dashboard',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    description: 'Overview & Progress'
   },
   {
     title: 'Study Buddy',
@@ -66,6 +68,7 @@ const sidebarItems = [
     icon: Trophy,
     description: 'Test Your Skills'
   },
+  */
 ];
 
 const UserProfileSection = () => {
@@ -130,11 +133,15 @@ export function AppSidebar({ className }: AppSidebarProps = {}) {
     )}>
       {/* Header */}
       <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-primary rounded-lg shadow-neumorph-inset flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">AE</span>
+            <span className="text-primary-foreground font-bold text-sm">T</span>
           </div>
-          <span className="font-bold text-sidebar-foreground">Actuarial Edge</span>
+          <div className="flex items-center gap-1">
+            <span className="font-bold text-sidebar-foreground">Tsungi</span>
+            <span className="font-bold text-blue-400">AI</span>
+            <span className="text-lg">😊</span>
+          </div>
         </div>
         <ThemeToggle />
       </div>

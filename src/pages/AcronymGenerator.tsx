@@ -12,227 +12,562 @@ import {
   Brain,
   Sparkles,
   Copy,
-  Trash2
+  Trash2,
+  Wand2,
+  Target,
+  CheckCircle
 } from 'lucide-react';
 
 const AcronymGenerator = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [newTerm, setNewTerm] = useState('');
-  const [newAcronym, setNewAcronym] = useState('');
-  const [newDefinition, setNewDefinition] = useState('');
+  const [inputText, setInputText] = useState('');
+  const [generatedAcronym, setGeneratedAcronym] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const savedAcronyms = [
-    {
-      id: 1,
-      term: 'NPV',
-      acronym: 'Net Present Value',
-      definition: 'The difference between present value of cash inflows and outflows',
-      category: 'Financial Mathematics',
-      memoryAid: 'Net Profit Victory - remember it as your victory in calculating profit'
-    },
-    {
-      id: 2,
-      term: 'IRR',
-      acronym: 'Internal Rate of Return',
-      definition: 'The discount rate that makes NPV equal to zero',
-      category: 'Investment Analysis',
-      memoryAid: 'I Really Return - the rate that really returns your investment'
-    },
-    {
-      id: 3,
-      term: 'PV',
-      acronym: 'Present Value',
-      definition: 'Current worth of future cash flows',
-      category: 'Time Value',
-      memoryAid: 'Present Victory - victory is in the present, not future'
-    },
-    {
-      id: 4,
-      term: 'FV',
-      acronym: 'Future Value',
-      definition: 'Value of current investment at a future date',
-      category: 'Time Value',
-      memoryAid: 'Future Victory - your victory awaits in the future'
+  const [savedAcronyms, setSavedAcronyms] = useState([]);
+
+  const saveAcronymToLibrary = () => {
+    if (generatedAcronym) {
+      const newAcronym = {
+        ...generatedAcronym,
+        id: Date.now() // Simple ID generation
+      };
+      setSavedAcronyms(prev => [...prev, newAcronym]);
     }
-  ];
+  };
 
-  const generateMemoryAid = () => {
-    // Simulated AI generation - in real app this would call an AI service
-    const aids = [
-      `${newTerm} - Think of it as "${newTerm.split('').map(c => getWordForLetter(c)).join(' ')}"`,
-      `Remember ${newTerm} by: "${newTerm.split('').map(c => getRandomWord(c)).join(' ')}"`,
-      `${newTerm} memory trick: "${newTerm.split('').map(c => getActuarialWord(c)).join(' ')}"`,
+  // Intelligent acronym generation using Flowise API
+  const generateSmartAcronym = async () => {
+    if (!inputText.trim()) return;
+    
+    setIsGenerating(true);
+    
+    try {
+      // Flowise API endpoint
+      const response = await fetch('https://cloud.flowiseai.com/api/v1/prediction/f4e3fd37-4d9f-4d7b-bb7f-ed4d3f26eb30', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: inputText
+        })
+      });
+      
+      const data = await response.json();
+      
+      // Parse the response - Flowise might return it in data.text or directly
+      let acronymData;
+      if (typeof data.text === 'string') {
+        acronymData = JSON.parse(data.text);
+      } else if (data.acronym) {
+        acronymData = data;
+      } else {
+        throw new Error('Invalid response format');
+      }
+      
+      // Check for error response
+      if (acronymData.error) {
+        alert(acronymData.error);
+        return;
+      }
+      
+      setGeneratedAcronym(acronymData);
+      
+    } catch (error) {
+      console.error('Error generating acronym:', error);
+      alert('Failed to generate acronym. Please try again.');
+      
+      // Fallback to mock data for development
+      const analysis = analyzeInputText(inputText);
+      setGeneratedAcronym(analysis);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const analyzeInputText = (text: string) => {
+    // This simulates intelligent analysis - in production this would use AI/NLP
+    const keyTerms = extractKeyTerms(text);
+    const acronym = createMemorableAcronym(keyTerms);
+    const context = generateContext(text, keyTerms);
+    
+    return {
+      acronym,
+      topic: extractTopic(text),
+      letters: acronym.split(' ').join('').split('').map((letter, index) => ({
+        letter: letter.toUpperCase(),
+        term: keyTerms[index]?.term || `Term ${index + 1}`,
+        explanation: keyTerms[index]?.explanation || `Explanation for ${letter}`
+      })),
+      context,
+      category: categorizeContent(text)
+    };
+  };
+
+  const extractKeyTerms = (text: string) => {
+    // Simulate intelligent extraction based on actuarial/financial context
+    const terms = [
+      { term: 'Risk', explanation: 'Identify and assess potential risks' },
+      { term: 'Analysis', explanation: 'Conduct thorough quantitative analysis' },
+      { term: 'Planning', explanation: 'Develop strategic implementation plans' },
+      { term: 'Implementation', explanation: 'Execute planned strategies effectively' },
+      { term: 'Documentation', explanation: 'Maintain comprehensive records' },
+      { term: 'Evaluation', explanation: 'Assess outcomes and performance' },
+      { term: 'Communication', explanation: 'Ensure clear stakeholder communication' },
+      { term: 'Optimization', explanation: 'Continuously improve processes' }
     ];
-    return aids[Math.floor(Math.random() * aids.length)];
+    
+    // Return 5-8 terms based on text analysis
+    return terms.slice(0, Math.min(8, Math.max(5, Math.ceil(text.length / 50))));
   };
 
-  const getWordForLetter = (letter: string) => {
-    const words = {
-      'A': 'Always', 'B': 'Better', 'C': 'Calculate', 'D': 'Determine', 'E': 'Evaluate',
-      'F': 'Find', 'G': 'Generate', 'H': 'Help', 'I': 'Identify', 'J': 'Judge',
-      'K': 'Know', 'L': 'Learn', 'M': 'Measure', 'N': 'Navigate', 'O': 'Organize',
-      'P': 'Plan', 'Q': 'Question', 'R': 'Remember', 'S': 'Study', 'T': 'Think',
-      'U': 'Understand', 'V': 'Value', 'W': 'Work', 'X': 'eXamine', 'Y': 'Yield', 'Z': 'Zero'
-    };
-    return words[letter.toUpperCase()] || letter;
+  const createMemorableAcronym = (terms: any[]) => {
+    // Create pronounceable acronym from first letters
+    const letters = terms.map(term => term.term[0]).join('');
+    
+    // Try to create pronounceable words
+    const memorableAcronyms = [
+      'RAPID PACE', 'SMART CARE', 'CLEAR PATH', 'WISE STEP', 'SAFE PLAN',
+      'QUICK WINS', 'SOLID BASE', 'POWER MOVE', 'BRIGHT IDEA', 'SHARP MIND'
+    ];
+    
+    return memorableAcronyms[Math.floor(Math.random() * memorableAcronyms.length)];
   };
 
-  const getRandomWord = (letter: string) => {
-    const words = {
-      'A': 'Apple', 'B': 'Book', 'C': 'Cat', 'D': 'Dog', 'E': 'Eagle',
-      'F': 'Fire', 'G': 'Green', 'H': 'House', 'I': 'Ice', 'J': 'Jump',
-      'K': 'King', 'L': 'Light', 'M': 'Moon', 'N': 'Night', 'O': 'Ocean',
-      'P': 'Peace', 'Q': 'Queen', 'R': 'River', 'S': 'Sun', 'T': 'Tree',
-      'U': 'Unity', 'V': 'Victory', 'W': 'Water', 'X': 'X-ray', 'Y': 'Yellow', 'Z': 'Zebra'
-    };
-    return words[letter.toUpperCase()] || letter;
+  const extractTopic = (text: string) => {
+    // Simulate topic extraction
+    const topics = [
+      'Investment Strategy Framework',
+      'Risk Assessment Methodology', 
+      'Financial Planning Process',
+      'Actuarial Analysis Framework',
+      'Strategic Decision Making',
+      'Performance Evaluation System'
+    ];
+    
+    return topics[Math.floor(Math.random() * topics.length)];
   };
 
-  const getActuarialWord = (letter: string) => {
-    const words = {
-      'A': 'Actuarial', 'B': 'Bond', 'C': 'Cash', 'D': 'Discount', 'E': 'Equity',
-      'F': 'Future', 'G': 'Growth', 'H': 'Hedge', 'I': 'Interest', 'J': 'Joint',
-      'K': 'Knowledge', 'L': 'Liability', 'M': 'Market', 'N': 'Net', 'O': 'Option',
-      'P': 'Present', 'Q': 'Quantify', 'R': 'Risk', 'S': 'Security', 'T': 'Time',
-      'U': 'Utility', 'V': 'Value', 'W': 'Wealth', 'X': 'eXchange', 'Y': 'Yield', 'Z': 'Zone'
-    };
-    return words[letter.toUpperCase()] || letter;
+  const generateContext = (text: string, terms: any[]) => {
+    return `This framework provides a systematic approach to ${extractTopic(text).toLowerCase()}, ensuring comprehensive coverage of all critical factors.`;
+  };
+
+  const categorizeContent = (text: string) => {
+    // Simple categorization based on keywords
+    if (text.toLowerCase().includes('risk')) return 'Risk Management';
+    if (text.toLowerCase().includes('investment')) return 'Investment Analysis';
+    if (text.toLowerCase().includes('financial')) return 'Financial Planning';
+    return 'Strategic Analysis';
   };
 
   const filteredAcronyms = savedAcronyms.filter(acronym =>
-    acronym.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
     acronym.acronym.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    acronym.definition.toLowerCase().includes(searchTerm.toLowerCase())
+    acronym.topic.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    acronym.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    acronym.letters.some(letter => 
+      letter.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      letter.explanation.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-            Acronym Generator
+    <div className="min-h-screen p-6" style={{ background: '#16141a' }}>
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4 py-8">
+          <h1 className="text-4xl font-bold text-white">
+            Smart Acronym Generator
           </h1>
-          <p className="text-muted-foreground">
-            Create memorable acronyms and memory aids for actuarial terms
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            Create intelligent, memorable acronyms for actuarial and financial concepts — like FAT SIR, RAPID COST, and PIERCES & CREAMeR
           </p>
+          {savedAcronyms.length > 0 && (
+            <div className="flex justify-center mt-6">
+              <div 
+                className="px-6 py-3 rounded-full text-white font-medium flex items-center gap-2"
+                style={{
+                  background: 'linear-gradient(145deg, #141217, #18151b)',
+                  boxShadow: '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+                }}
+              >
+                <Brain className="w-4 h-4" />
+                {savedAcronyms.length} Smart Acronyms
+              </div>
+            </div>
+          )}
         </div>
-        <Badge variant="outline" className="p-2">
-          <Brain className="w-4 h-4 mr-2" />
-          {savedAcronyms.length} Saved Terms
-        </Badge>
+
+        {/* Search - Only show when there are saved acronyms */}
+        {savedAcronyms.length > 0 && (
+          <div 
+            className="p-6 rounded-3xl"
+            style={{
+              background: 'linear-gradient(145deg, #141217, #18151b)',
+              boxShadow: '22px 22px 44px #0e0c10, -22px -22px 44px #1e1c23'
+            }}
+          >
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <input
+                placeholder="Search acronyms, terms, or definitions..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 text-base text-white placeholder-gray-400 bg-transparent border-0 outline-none rounded-2xl"
+                style={{
+                  background: 'linear-gradient(145deg, #18151b, #141217)',
+                  boxShadow: 'inset 10px 10px 20px #0e0c10, inset -10px -10px 20px #1e1c23'
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Smart Acronym Generator */}
+        <div 
+          className="p-8 rounded-3xl"
+          style={{
+            background: 'linear-gradient(145deg, #141217, #18151b)',
+            boxShadow: '22px 22px 44px #0e0c10, -22px -22px 44px #1e1c23'
+          }}
+        >
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div 
+                className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(145deg, #18151b, #141217)',
+                  boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                }}
+              >
+                <Wand2 className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">
+                  Generate Smart Acronym
+                </h2>
+                <p className="text-gray-300 leading-relaxed mt-2">
+                  Enter a topic, paragraph, or concept. AI will analyze it and create a memorable acronym with educational explanations.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <label className="text-sm font-semibold text-gray-200">Topic or Concept</label>
+              <textarea
+                placeholder="e.g., 'Evaluating investment opportunities in volatile markets requires considering multiple risk factors, regulatory requirements, stakeholder impacts, and timing considerations...'"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                rows={5}
+                className="w-full p-4 text-base text-white placeholder-gray-400 bg-transparent border-0 outline-none resize-none rounded-2xl leading-relaxed"
+                style={{
+                  background: 'linear-gradient(145deg, #18151b, #141217)',
+                  boxShadow: 'inset 15px 15px 30px #0e0c10, inset -15px -15px 30px #1e1c23'
+                }}
+              />
+            </div>
+
+            <button 
+              onClick={generateSmartAcronym} 
+              disabled={!inputText.trim() || isGenerating}
+              className="w-full h-14 rounded-2xl text-base font-semibold text-white flex items-center justify-center gap-3 transition-all duration-200 disabled:opacity-50"
+              style={{
+                background: isGenerating 
+                  ? 'linear-gradient(145deg, #1a1e2e, #2a2e3e)' 
+                  : 'linear-gradient(145deg, #2563eb, #1d4ed8)',
+                boxShadow: isGenerating 
+                  ? 'inset 8px 8px 16px #0e0c10, inset -8px -8px 16px #1e1c23'
+                  : '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+              }}
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Analyzing & Creating Acronym...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  Generate Smart Acronym
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Generated Acronym Display */}
+        {generatedAcronym && (
+          <div 
+            className="p-8 rounded-3xl"
+            style={{
+              background: 'linear-gradient(145deg, #1a1d25, #1e212a)',
+              boxShadow: '22px 22px 44px #0e0c10, -22px -22px 44px #1e1c23'
+            }}
+          >
+            <div className="space-y-8">
+              {/* Header */}
+              <div className="flex items-center gap-4 mb-6">
+                <div 
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(145deg, #2563eb, #1d4ed8)',
+                    boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                  }}
+                >
+                  <Target className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-2">
+                    {generatedAcronym.acronym}
+                  </h2>
+                  <p className="text-xl text-gray-300 font-medium">{generatedAcronym.topic}</p>
+                  <div 
+                    className="inline-block px-4 py-2 rounded-full text-sm font-medium text-gray-200 mt-3"
+                    style={{
+                      background: 'linear-gradient(145deg, #141217, #18151b)',
+                      boxShadow: '6px 6px 12px #0e0c10, -6px -6px 12px #1e1c23'
+                    }}
+                  >
+                    {generatedAcronym.category}
+                  </div>
+                </div>
+              </div>
+
+              {/* Acronym Breakdown */}
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-white mb-6">Acronym Breakdown</h3>
+                <div className="space-y-4">
+                  {generatedAcronym.letters.map((item, index) => (
+                    <div 
+                      key={index} 
+                      className="flex items-start gap-4 p-5 rounded-2xl"
+                      style={{
+                        background: 'linear-gradient(145deg, #18151b, #141217)',
+                        boxShadow: '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+                      }}
+                    >
+                      <div 
+                        className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg text-white shrink-0"
+                        style={{
+                          background: 'linear-gradient(145deg, #2563eb, #1d4ed8)',
+                          boxShadow: '6px 6px 12px #0e0c10, -6px -6px 12px #1e1c23'
+                        }}
+                      >
+                        {item.letter}
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <h4 className="font-bold text-lg text-white">{item.term}</h4>
+                        <p className="text-gray-300 leading-relaxed">{item.explanation}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Context */}
+              <div 
+                className="p-6 rounded-2xl"
+                style={{
+                  background: 'linear-gradient(145deg, #18151b, #141217)',
+                  boxShadow: '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+                }}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div 
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{
+                      background: 'linear-gradient(145deg, #fbbf24, #f59e0b)',
+                      boxShadow: '4px 4px 8px #0e0c10, -4px -4px 8px #1e1c23'
+                    }}
+                  >
+                    <Lightbulb className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-bold text-lg text-white">Usage Context</span>
+                </div>
+                <p className="text-gray-300 leading-relaxed text-base">{generatedAcronym.context}</p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-4 pt-4">
+                <button 
+                  className="flex-1 h-12 rounded-2xl font-semibold text-gray-300 flex items-center justify-center gap-2 transition-all duration-200"
+                  style={{
+                    background: 'linear-gradient(145deg, #141217, #18151b)',
+                    boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                  }}
+                >
+                  <Copy className="w-4 h-4" />
+                  Copy Acronym
+                </button>
+                <button 
+                  onClick={saveAcronymToLibrary}
+                  className="flex-1 h-12 rounded-2xl font-semibold text-white flex items-center justify-center gap-2 transition-all duration-200"
+                  style={{
+                    background: 'linear-gradient(145deg, #10b981, #059669)',
+                    boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                  }}
+                >
+                  <BookmarkPlus className="w-4 h-4" />
+                  Save to Library
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Saved Acronyms Library - Only show when there are saved acronyms */}
+        {savedAcronyms.length > 0 && (
+          <div 
+            className="p-8 rounded-3xl"
+            style={{
+              background: 'linear-gradient(145deg, #141217, #18151b)',
+              boxShadow: '22px 22px 44px #0e0c10, -22px -22px 44px #1e1c23'
+            }}
+          >
+            <div className="space-y-8">
+              {/* Header */}
+              <div className="flex items-center gap-4 mb-8">
+                <div 
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(145deg, #fbbf24, #f59e0b)',
+                    boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                  }}
+                >
+                  <Lightbulb className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    Smart Acronym Library
+                  </h2>
+                  <p className="text-gray-300 leading-relaxed mt-2">
+                    Professional acronyms for actuarial and financial analysis
+                  </p>
+                </div>
+              </div>
+
+              {/* Acronym Cards */}
+              <div className="space-y-6">
+                {filteredAcronyms.map((item) => (
+                  <div 
+                    key={item.id} 
+                    className="p-6 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(145deg, #18151b, #141217)',
+                      boxShadow: '15px 15px 30px #0e0c10, -15px -15px 30px #1e1c23'
+                    }}
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <div 
+                          className="w-16 h-12 rounded-xl flex items-center justify-center"
+                          style={{
+                            background: 'linear-gradient(145deg, #2563eb, #1d4ed8)',
+                            boxShadow: '6px 6px 12px #0e0c10, -6px -6px 12px #1e1c23'
+                          }}
+                        >
+                          <span className="font-bold text-white text-lg">{item.acronym}</span>
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-xl text-white mb-2">{item.topic}</h3>
+                          <div 
+                            className="inline-block px-3 py-1 rounded-full text-sm font-medium text-gray-200"
+                            style={{
+                              background: 'linear-gradient(145deg, #141217, #18151b)',
+                              boxShadow: '4px 4px 8px #0e0c10, -4px -4px 8px #1e1c23'
+                            }}
+                          >
+                            {item.category}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button 
+                          className="h-10 w-10 rounded-xl flex items-center justify-center text-gray-300 transition-all duration-200"
+                          style={{
+                            background: 'linear-gradient(145deg, #141217, #18151b)',
+                            boxShadow: '6px 6px 12px #0e0c10, -6px -6px 12px #1e1c23'
+                          }}
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                        <button 
+                          className="h-10 w-10 rounded-xl flex items-center justify-center text-gray-300 transition-all duration-200"
+                          style={{
+                            background: 'linear-gradient(145deg, #141217, #18151b)',
+                            boxShadow: '6px 6px 12px #0e0c10, -6px -6px 12px #1e1c23'
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Letter Breakdown */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                      {item.letters.map((letter, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-start gap-3 p-4 rounded-xl"
+                          style={{
+                            background: 'linear-gradient(145deg, #1a1d25, #1e212a)',
+                            boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                          }}
+                        >
+                          <div 
+                            className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm text-white shrink-0"
+                            style={{
+                              background: 'linear-gradient(145deg, #2563eb, #1d4ed8)',
+                              boxShadow: '4px 4px 8px #0e0c10, -4px -4px 8px #1e1c23'
+                            }}
+                          >
+                            {letter.letter}
+                          </div>
+                          <div className="space-y-1">
+                            <span className="font-semibold text-sm text-white">{letter.term}</span>
+                            <p className="text-xs text-gray-300 leading-relaxed">{letter.explanation}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Context */}
+                    <div 
+                      className="p-4 rounded-xl border-l-4"
+                      style={{
+                        background: 'linear-gradient(145deg, #1a1d25, #1e212a)',
+                        boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23',
+                        borderLeftColor: '#2563eb'
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <Brain className="w-4 h-4 text-blue-400" />
+                        <span className="text-sm font-bold text-white">Usage Context</span>
+                      </div>
+                      <p className="text-sm text-gray-300 leading-relaxed">{item.context}</p>
+                    </div>
+                  </div>
+                ))}
+                
+                {filteredAcronyms.length === 0 && (
+                  <div className="text-center py-12">
+                    <div 
+                      className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                      style={{
+                        background: 'linear-gradient(145deg, #18151b, #141217)',
+                        boxShadow: '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+                      }}
+                    >
+                      <Brain className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-300 text-lg">No acronyms found matching your search.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Search */}
-      <Card className="shadow-card">
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search acronyms, terms, or definitions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Create New Acronym */}
-      <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Plus className="w-5 h-5" />
-            Create New Acronym
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Term/Abbreviation</label>
-              <Input
-                placeholder="e.g., NPV, IRR, WACC"
-                value={newTerm}
-                onChange={(e) => setNewTerm(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Full Form</label>
-              <Input
-                placeholder="e.g., Net Present Value"
-                value={newAcronym}
-                onChange={(e) => setNewAcronym(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div>
-            <label className="text-sm font-medium mb-2 block">Definition</label>
-            <Textarea
-              placeholder="Explain what this term means..."
-              value={newDefinition}
-              onChange={(e) => setNewDefinition(e.target.value)}
-              rows={3}
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <Button onClick={generateMemoryAid} variant="outline" className="gap-2">
-              <Sparkles className="w-4 h-4" />
-              Generate Memory Aid
-            </Button>
-            <Button className="gap-2">
-              <BookmarkPlus className="w-4 h-4" />
-              Save Acronym
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Saved Acronyms */}
-      <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="w-5 h-5" />
-            Your Acronym Library
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {filteredAcronyms.map((item) => (
-            <div key={item.id} className="p-4 rounded-xl border bg-card/50 hover:bg-card transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-primary rounded-lg shadow-neumorph-inset flex items-center justify-center">
-                    <span className="font-bold text-primary-foreground text-sm">{item.term}</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">{item.acronym}</h3>
-                    <Badge variant="secondary" className="mt-1">{item.category}</Badge>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <p className="text-muted-foreground mb-3">{item.definition}</p>
-              
-              <div className="p-3 bg-accent/10 rounded-lg border-l-4 border-accent">
-                <div className="flex items-center gap-2 mb-1">
-                  <Brain className="w-4 h-4 text-accent" />
-                  <span className="text-sm font-medium text-accent">Memory Aid</span>
-                </div>
-                <p className="text-sm">{item.memoryAid}</p>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
     </div>
   );
 };

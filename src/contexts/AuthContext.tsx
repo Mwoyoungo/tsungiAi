@@ -71,33 +71,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // Add timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      console.log('Auth initialization timeout - setting loading to false');
-      setLoading(false);
-    }, 5000); // 5 second timeout
-
-    // Get initial user
-    getCurrentUser().then(({ user: currentUser }) => {
-      clearTimeout(timeoutId);
-      console.log('Current user:', currentUser);
-      setUser(currentUser);
-      if (currentUser) {
-        loadUserProfile(currentUser.id);
-      }
-      setLoading(false);
-    }).catch((error) => {
-      clearTimeout(timeoutId);
-      console.error('Error getting current user:', error);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = onAuthStateChange(async (event, session) => {
+    // Listen for auth changes first
+    const { data: { subscription } } = onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email || 'no user');
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        await loadUserProfile(session.user.id);
+        loadUserProfile(session.user.id);
       } else {
         setProfile(null);
       }
@@ -105,7 +85,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Get initial session
+    getCurrentUser().then(({ user: currentUser }) => {
+      console.log('Initial user check:', currentUser?.email || 'no user');
+      setUser(currentUser);
+      
+      if (currentUser) {
+        loadUserProfile(currentUser.id);
+      }
+      
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const value = {
