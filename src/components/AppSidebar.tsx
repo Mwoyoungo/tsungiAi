@@ -6,17 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  LayoutDashboard,
-  Users,
   Volume2,
   Lightbulb,
-  BookOpen,
-  Trophy,
-  Settings,
-  Upload,
   ChevronRight,
-  LogOut,
-  User
+  LogOut
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -188,19 +181,6 @@ export function AppSidebar({ className }: AppSidebarProps = {}) {
       {/* User Profile Section */}
       <UserProfileSection />
 
-      {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
-        <Link
-          to="/settings"
-          className={cn(
-            "group flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-all duration-200",
-            "hover:bg-sidebar-accent hover:shadow-neumorph-inset text-sidebar-foreground hover:text-sidebar-accent-foreground"
-          )}
-        >
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
-        </Link>
-      </div>
     </div>
   );
 }

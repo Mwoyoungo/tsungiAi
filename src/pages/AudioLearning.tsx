@@ -41,7 +41,10 @@ const AudioLearning = () => {
   const [currentTrack, setCurrentTrack] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(() => {
+    const savedVolume = localStorage.getItem('tsungi-ai-volume');
+    return savedVolume ? parseFloat(savedVolume) : 1;
+  });
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Load audio files from Supabase on component mount
@@ -53,9 +56,57 @@ const AudioLearning = () => {
   useEffect(() => {
     if (audioRef.current && audioFiles[currentTrack]) {
       audioRef.current.src = audioFiles[currentTrack].url;
+      audioRef.current.volume = volume; // Apply current volume setting
       audioRef.current.load();
     }
-  }, [currentTrack, audioFiles]);
+  }, [currentTrack, audioFiles, volume]);
+
+  // Ensure volume is applied when audio is loaded
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  // Keyboard shortcuts for audio control
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Only handle if not typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case ' ': // Spacebar for play/pause
+          e.preventDefault();
+          handlePlayPause();
+          break;
+        case 'ArrowUp': // Volume up
+          e.preventDefault();
+          handleVolumeChange(Math.min(1, volume + 0.1));
+          break;
+        case 'ArrowDown': // Volume down
+          e.preventDefault();
+          handleVolumeChange(Math.max(0, volume - 0.1));
+          break;
+        case 'm': // Mute toggle
+          e.preventDefault();
+          handleVolumeChange(volume === 0 ? 1 : 0);
+          break;
+        case 'ArrowLeft': // Previous track
+          e.preventDefault();
+          handlePrevious();
+          break;
+        case 'ArrowRight': // Next track
+          e.preventDefault();
+          handleNext();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [volume, isPlaying, currentTrack, audioFiles.length]);
 
   // Load and organize audio files from Supabase with caching
   const loadAudioFiles = async () => {
@@ -220,6 +271,7 @@ const AudioLearning = () => {
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
+    localStorage.setItem('tsungi-ai-volume', newVolume.toString());
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
