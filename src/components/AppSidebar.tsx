@@ -11,7 +11,7 @@ import {
   Volume2,
   Lightbulb,
   BookOpen,
-  Trophy,
+  Keyboard,
   Upload,
   ChevronRight,
   LogOut
@@ -53,10 +53,10 @@ const sidebarItems = [
     description: 'Mock Exams'
   },
   {
-    title: 'Challenges',
-    href: '/challenges',
-    icon: Trophy,
-    description: 'Test Your Skills'
+    title: 'Typing Game',
+    href: '/typing-game',
+    icon: Keyboard,
+    description: 'Master Touch Typing'
   },
 ];
 
@@ -127,7 +127,7 @@ export function AppSidebar({ className }: AppSidebarProps = {}) {
             <span className="text-primary-foreground font-bold text-sm">T</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="font-bold text-sidebar-foreground">Tsungi</span>
+            <span className="font-bold text-sidebar-foreground">Tsungi's</span>
             <span className="font-bold text-blue-400">AI</span>
             <span className="text-lg">😊</span>
           </div>

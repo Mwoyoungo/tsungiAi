@@ -6,7 +6,7 @@ import {
   Lightbulb,
   Users,
   Upload,
-  BookOpen
+  Keyboard
 } from 'lucide-react';
 
 const mobileNavItems = [
@@ -31,9 +31,9 @@ const mobileNavItems = [
     icon: Upload,
   },
   {
-    title: 'Tests',
-    href: '/practice',
-    icon: BookOpen,
+    title: 'Typing',
+    href: '/typing-game',
+    icon: Keyboard,
   },
 ];
 

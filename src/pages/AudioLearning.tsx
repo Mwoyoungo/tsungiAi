@@ -69,6 +69,7 @@ const AudioLearning = () => {
     const newProgress = { ...trackProgress, [filePath]: progressPercent };
     setTrackProgress(newProgress);
     localStorage.setItem('tsungi-ai-track-progress', JSON.stringify(newProgress));
+    console.log(`Progress saved: ${filePath} - ${progressPercent}%`);
   };
 
   // Update audio element when current track changes
@@ -265,20 +266,23 @@ const AudioLearning = () => {
   };
 
   const handleTimeUpdate = () => {
-    if (audioRef.current && audioFiles[currentTrack]) {
+    if (audioRef.current && audioFiles.length > 0 && audioFiles[currentTrack]) {
       const current = audioRef.current.currentTime;
       const total = audioRef.current.duration;
       
       setCurrentTime(current);
       
       // Calculate and save progress percentage
-      if (total > 0) {
-        const progressPercent = Math.round((current / total) * 100);
+      if (total > 0 && !isNaN(total)) {
+        const progressPercent = Math.min(100, Math.round((current / total) * 100));
         const currentFile = audioFiles[currentTrack];
         
-        // Save progress every 5% increment to avoid too many localStorage writes
-        if (progressPercent % 5 === 0 || progressPercent === 100) {
-          saveTrackProgress(currentFile.path, progressPercent);
+        if (currentFile && currentFile.path) {
+          // Save progress every 2% increment or every 10 seconds, whichever comes first
+          const lastSavedProgress = trackProgress[currentFile.path] || 0;
+          if (progressPercent > lastSavedProgress + 1 || progressPercent === 100) {
+            saveTrackProgress(currentFile.path, progressPercent);
+          }
         }
       }
     }

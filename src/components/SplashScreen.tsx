@@ -94,8 +94,11 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
             <span className="inline-block animate-bounce" style={{ animationDelay: '0.3s' }}>n</span>
             <span className="inline-block animate-bounce" style={{ animationDelay: '0.4s' }}>g</span>
             <span className="inline-block animate-bounce" style={{ animationDelay: '0.5s' }}>i</span>
-            <span className="inline-block animate-bounce text-blue-400" style={{ animationDelay: '0.6s' }}>A</span>
-            <span className="inline-block animate-bounce text-blue-400" style={{ animationDelay: '0.7s' }}>I</span>
+            <span className="inline-block animate-bounce" style={{ animationDelay: '0.6s' }}>'</span>
+            <span className="inline-block animate-bounce" style={{ animationDelay: '0.7s' }}>s</span>
+            <span className="inline-block animate-bounce text-blue-400" style={{ animationDelay: '0.8s' }}>&nbsp;</span>
+            <span className="inline-block animate-bounce text-blue-400" style={{ animationDelay: '0.9s' }}>A</span>
+            <span className="inline-block animate-bounce text-blue-400" style={{ animationDelay: '1.0s' }}>I</span>
           </h1>
           
           {/* Smiling emoji with rotation animation */}

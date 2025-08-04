@@ -15,7 +15,7 @@ import AudioLearning from "./pages/AudioLearning";
 import AcronymGenerator from "./pages/AcronymGenerator";
 import AudioUpload from "./pages/AudioUpload";
 import Practice from "./pages/Practice";
-import Challenges from "./pages/Challenges";
+import TypingGame from "./pages/TypingGame";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { ThemeDemo } from "@/components/ThemeDemo";
@@ -88,10 +88,10 @@ const App = () => {
                       </AppLayout>
                     </ProtectedRoute>
                   } />
-                  <Route path="/challenges" element={
+                  <Route path="/typing-game" element={
                     <ProtectedRoute>
                       <AppLayout>
-                        <Challenges />
+                        <TypingGame />
                       </AppLayout>
                     </ProtectedRoute>
                   } />
