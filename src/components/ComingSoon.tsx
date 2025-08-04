@@ -84,7 +84,7 @@ export const ComingSoon: React.FC<ComingSoonProps> = ({
             Under Development
           </h2>
           <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-            We're working hard to bring you this amazing feature. It will be part of the TsungiAI ecosystem soon!
+            We're working hard to bring you this amazing feature. It will be part of the Tsungi's AI ecosystem soon!
           </p>
 
           {/* Features Preview */}
