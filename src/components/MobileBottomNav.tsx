@@ -3,7 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   Volume2,
-  Lightbulb
+  Lightbulb,
+  Users,
+  Upload,
+  BookOpen
 } from 'lucide-react';
 
 const mobileNavItems = [
@@ -16,6 +19,21 @@ const mobileNavItems = [
     title: 'Acronyms',
     href: '/acronyms',
     icon: Lightbulb,
+  },
+  {
+    title: 'Study',
+    href: '/study-buddy',
+    icon: Users,
+  },
+  {
+    title: 'Upload',
+    href: '/upload',
+    icon: Upload,
+  },
+  {
+    title: 'Tests',
+    href: '/practice',
+    icon: BookOpen,
   },
 ];
 

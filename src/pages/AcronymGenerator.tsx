@@ -59,7 +59,23 @@ const AcronymGenerator = () => {
       // Parse the response - Flowise might return it in data.text or directly
       let acronymData;
       if (typeof data.text === 'string') {
-        acronymData = JSON.parse(data.text);
+        let cleanText = data.text;
+        
+        // Remove markdown code blocks if present
+        if (cleanText.includes('```json')) {
+          cleanText = cleanText.replace(/```json\s*/g, '').replace(/\s*```/g, '');
+        }
+        
+        // Remove any leading/trailing whitespace
+        cleanText = cleanText.trim();
+        
+        const parsedData = JSON.parse(cleanText);
+        // Handle new JSON structure with acronyms array
+        if (parsedData.acronyms && parsedData.acronyms.length > 0) {
+          acronymData = parsedData.acronyms[0]; // Use first acronym from array
+        } else {
+          acronymData = parsedData;
+        }
       } else if (data.acronym) {
         acronymData = data;
       } else {
@@ -72,7 +88,20 @@ const AcronymGenerator = () => {
         return;
       }
       
-      setGeneratedAcronym(acronymData);
+      // Transform new format to expected UI format
+      const transformedData = {
+        acronym: acronymData.acronym,
+        topic: inputText.substring(0, 60) + '...', // Use input as topic
+        letters: Object.entries(acronymData.terms || {}).map(([letter, term]) => ({
+          letter: letter.toUpperCase(),
+          term: term,
+          explanation: `Key component: ${term}`
+        })),
+        context: acronymData.notes || 'Generated smart acronym for better memorization',
+        category: `Relevance: ${acronymData.domainRelevance || 'High'}, Pronounceability: ${acronymData.pronounceability || 'Good'}`
+      };
+      
+      setGeneratedAcronym(transformedData);
       
     } catch (error) {
       console.error('Error generating acronym:', error);

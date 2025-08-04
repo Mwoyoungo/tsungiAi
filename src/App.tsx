@@ -14,6 +14,8 @@ import StudyBuddy from "./pages/StudyBuddy";
 import AudioLearning from "./pages/AudioLearning";
 import AcronymGenerator from "./pages/AcronymGenerator";
 import AudioUpload from "./pages/AudioUpload";
+import Practice from "./pages/Practice";
+import Challenges from "./pages/Challenges";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { ThemeDemo } from "@/components/ThemeDemo";
@@ -43,7 +45,7 @@ const App = () => {
                   {/* Public routes */}
                   <Route path="/auth" element={<Auth />} />
                   
-                  {/* Protected routes - Only Audio and Acronyms */}
+                  {/* Protected routes */}
                   <Route path="/" element={
                     <ProtectedRoute>
                       <AppLayout>
@@ -65,14 +67,34 @@ const App = () => {
                       </AppLayout>
                     </ProtectedRoute>
                   } />
-                  
-                  {/* Hidden routes - keep code but don't show in navigation */}
-                  {/* 
-                  <Route path="/dashboard" element={<ProtectedRoute><AppLayout><Index /></AppLayout></ProtectedRoute>} />
-                  <Route path="/study-buddy" element={<ProtectedRoute><AppLayout><StudyBuddy /></AppLayout></ProtectedRoute>} />
-                  <Route path="/upload" element={<ProtectedRoute><AppLayout><AudioUpload /></AppLayout></ProtectedRoute>} />
-                  <Route path="/theme-demo" element={<ProtectedRoute><AppLayout><ThemeDemo /></AppLayout></ProtectedRoute>} />
-                  */}
+                  <Route path="/study-buddy" element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <StudyBuddy />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/upload" element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <AudioUpload />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/practice" element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Practice />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/challenges" element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Challenges />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  } />
                   
                   {/* Catch-all route */}
                   <Route path="*" element={<NotFound />} />

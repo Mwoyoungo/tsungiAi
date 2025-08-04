@@ -6,8 +6,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
+  LayoutDashboard,
+  Users,
   Volume2,
   Lightbulb,
+  BookOpen,
+  Trophy,
+  Upload,
   ChevronRight,
   LogOut
 } from 'lucide-react';
@@ -28,14 +33,6 @@ const sidebarItems = [
     href: '/acronyms',
     icon: Lightbulb,
     description: 'Memory Aids'
-  },
-  // Hidden items - keep for future use
-  /*
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    description: 'Overview & Progress'
   },
   {
     title: 'Study Buddy',
@@ -61,7 +58,6 @@ const sidebarItems = [
     icon: Trophy,
     description: 'Test Your Skills'
   },
-  */
 ];
 
 const UserProfileSection = () => {

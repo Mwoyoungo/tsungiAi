@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { listAudioFiles, getAudioUrl } from '@/lib/supabase';
 import { 
   Play, 
@@ -18,7 +19,8 @@ import {
   Loader2,
   AlertCircle,
   VolumeX,
-  Volume1
+  Volume1,
+  CheckCircle
 } from 'lucide-react';
 
 interface AudioFile {
@@ -45,12 +47,29 @@ const AudioLearning = () => {
     const savedVolume = localStorage.getItem('tsungi-ai-volume');
     return savedVolume ? parseFloat(savedVolume) : 1;
   });
+  const [trackProgress, setTrackProgress] = useState<{ [key: string]: number }>({});
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Load audio files from Supabase on component mount
   useEffect(() => {
     loadAudioFiles();
+    loadTrackProgress();
   }, []);
+
+  // Load track progress from localStorage
+  const loadTrackProgress = () => {
+    const savedProgress = localStorage.getItem('tsungi-ai-track-progress');
+    if (savedProgress) {
+      setTrackProgress(JSON.parse(savedProgress));
+    }
+  };
+
+  // Save track progress to localStorage
+  const saveTrackProgress = (filePath: string, progressPercent: number) => {
+    const newProgress = { ...trackProgress, [filePath]: progressPercent };
+    setTrackProgress(newProgress);
+    localStorage.setItem('tsungi-ai-track-progress', JSON.stringify(newProgress));
+  };
 
   // Update audio element when current track changes
   useEffect(() => {
@@ -182,7 +201,7 @@ const AudioLearning = () => {
                 title: title,
                 trackNumber: trackNumber,
                 category: 'CA1',
-                progress: Math.floor(Math.random() * 100) // Mock progress for now
+                progress: 0 // Will be calculated from trackProgress state
               };
             });
           }
@@ -246,8 +265,22 @@ const AudioLearning = () => {
   };
 
   const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
+    if (audioRef.current && audioFiles[currentTrack]) {
+      const current = audioRef.current.currentTime;
+      const total = audioRef.current.duration;
+      
+      setCurrentTime(current);
+      
+      // Calculate and save progress percentage
+      if (total > 0) {
+        const progressPercent = Math.round((current / total) * 100);
+        const currentFile = audioFiles[currentTrack];
+        
+        // Save progress every 5% increment to avoid too many localStorage writes
+        if (progressPercent % 5 === 0 || progressPercent === 100) {
+          saveTrackProgress(currentFile.path, progressPercent);
+        }
+      }
     }
   };
 
@@ -285,6 +318,11 @@ const AudioLearning = () => {
 
   const currentAudioFile = audioFiles[currentTrack];
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  // Calculate overall stats from trackProgress
+  const completedTracks = Object.values(trackProgress).filter(progress => progress >= 100).length;
+  const totalTracks = audioFiles.length;
+  const overallProgress = totalTracks > 0 ? Math.round((Object.values(trackProgress).reduce((sum, progress) => sum + progress, 0) / totalTracks)) : 0;
 
   // Group files by disk for display
   const groupedFiles = audioFiles.reduce((groups, file) => {
@@ -388,8 +426,8 @@ const AudioLearning = () => {
                 <Clock className="w-4 h-4 md:w-6 md:h-6 text-secondary-foreground" />
               </div>
               <div className="text-center md:text-left">
-                <p className="text-lg md:text-2xl font-bold">24h</p>
-                <p className="text-xs md:text-sm text-muted-foreground">Duration</p>
+                <p className="text-lg md:text-2xl font-bold">{completedTracks}</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Completed</p>
               </div>
             </div>
           </CardContent>
@@ -402,7 +440,7 @@ const AudioLearning = () => {
                 <TrendingUp className="w-4 h-4 md:w-6 md:h-6 text-accent-foreground" />
               </div>
               <div className="text-center md:text-left">
-                <p className="text-lg md:text-2xl font-bold">67%</p>
+                <p className="text-lg md:text-2xl font-bold">{overallProgress}%</p>
                 <p className="text-xs md:text-sm text-muted-foreground">Progress</p>
               </div>
             </div>
@@ -505,56 +543,74 @@ const AudioLearning = () => {
         </Card>
       )}
 
-      {/* Track List by Disk */}
-      {Object.entries(groupedFiles).map(([diskName, files]) => (
-        <Card key={diskName} className="shadow-card">
-          <CardHeader className="pb-3 md:pb-6">
-            <CardTitle className="text-base md:text-lg">{diskName}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 md:space-y-3">
-            {files.map((file, index) => {
-              const globalIndex = audioFiles.findIndex(f => f.path === file.path);
-              const isCurrentTrack = globalIndex === currentTrack;
-              
-              return (
-                <div 
-                  key={file.path}
-                  className={`flex items-center gap-2 md:gap-4 p-2 md:p-3 rounded-lg md:rounded-xl border transition-all duration-200 hover:bg-card/50 cursor-pointer ${
-                    isCurrentTrack ? 'bg-primary/5 border-primary/20' : 'bg-card/20'
-                  }`}
-                  onClick={() => {
-                    setCurrentTrack(globalIndex);
-                    setIsPlaying(false);
-                  }}
-                >
-                  <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-secondary rounded-md md:rounded-lg shadow-neumorph-inset flex items-center justify-center">
-                    <span className="text-xs font-bold text-primary">{file.trackNumber}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm md:text-base truncate">{file.title}</h4>
-                    <p className="text-xs text-muted-foreground">Track {file.trackNumber}</p>
-                  </div>
-                  <div className="hidden md:block w-16">
-                    <Progress value={file.progress} className="h-1" />
-                    <p className="text-xs text-muted-foreground mt-1 text-center">{file.progress}%</p>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="w-8 h-8 md:w-auto md:h-auto"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(file.url, '_blank');
-                    }}
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      ))}
+      {/* Track List by Disk - Accordion */}
+      <Accordion type="multiple" className="space-y-4">
+        {Object.entries(groupedFiles).map(([diskName, files]) => (
+          <AccordionItem key={diskName} value={diskName} className="border-0">
+            <Card className="shadow-card">
+              <AccordionTrigger className="hover:no-underline p-0">
+                <CardHeader className="pb-3 md:pb-6 w-full">
+                  <CardTitle className="text-base md:text-lg text-left flex items-center justify-between">
+                    {diskName}
+                    <Badge variant="secondary" className="ml-auto mr-4">
+                      {files.length} tracks
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+              </AccordionTrigger>
+              <AccordionContent>
+                <CardContent className="space-y-2 md:space-y-3 pt-0">
+                  {files.map((file, index) => {
+                    const globalIndex = audioFiles.findIndex(f => f.path === file.path);
+                    const isCurrentTrack = globalIndex === currentTrack;
+                    const fileProgress = trackProgress[file.path] || 0;
+                    
+                    return (
+                      <div 
+                        key={file.path}
+                        className={`flex items-center gap-2 md:gap-4 p-2 md:p-3 rounded-lg md:rounded-xl border transition-all duration-200 hover:bg-card/50 cursor-pointer ${
+                          isCurrentTrack ? 'bg-primary/5 border-primary/20' : 'bg-card/20'
+                        }`}
+                        onClick={() => {
+                          setCurrentTrack(globalIndex);
+                          setIsPlaying(false);
+                        }}
+                      >
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-secondary rounded-md md:rounded-lg shadow-neumorph-inset flex items-center justify-center relative">
+                          {fileProgress >= 100 ? (
+                            <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
+                          ) : (
+                            <span className="text-xs font-bold text-primary">{file.trackNumber}</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm md:text-base truncate">{file.title}</h4>
+                          <p className="text-xs text-muted-foreground">Track {file.trackNumber}</p>
+                        </div>
+                        <div className="hidden md:block w-16">
+                          <Progress value={fileProgress} className="h-1" />
+                          <p className="text-xs text-muted-foreground mt-1 text-center">{fileProgress}%</p>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="w-8 h-8 md:w-auto md:h-auto"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(file.url, '_blank');
+                          }}
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 };
