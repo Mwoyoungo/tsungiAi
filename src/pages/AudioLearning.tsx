@@ -591,7 +591,7 @@ const AudioLearning = () => {
                           <h4 className="font-medium text-sm md:text-base truncate">{file.title}</h4>
                           <p className="text-xs text-muted-foreground">Track {file.trackNumber}</p>
                         </div>
-                        <div className="hidden md:block w-16">
+                        <div className="w-12 md:w-16">
                           <Progress value={fileProgress} className="h-1" />
                           <p className="text-xs text-muted-foreground mt-1 text-center">{fileProgress}%</p>
                         </div>
