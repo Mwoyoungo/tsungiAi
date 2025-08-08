@@ -15,14 +15,100 @@ import {
   Trash2,
   Wand2,
   Target,
-  CheckCircle
+  CheckCircle,
+  BookOpen,
+  GraduationCap,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
+
+
+// CA1 Acronym Library Data
+const ca1AcronymLibrary = [
+  {
+    id: 'create-great-lists',
+    acronym: 'CREATE GREAT LISTS',
+    chapter: 'Chapter 3: External Environment',
+    topic: 'Factors to consider in relation to the external environment',
+    letters: [
+      { letter: 'C', term: 'Commercial requirements', explanation: 'e.g. competition and the underwriting cycle' },
+      { letter: 'R', term: 'Regulation and legislation', explanation: 'Legal requirements and regulatory compliance' },
+      { letter: 'E', term: 'Environmental issues', explanation: 'Environmental factors affecting business' },
+      { letter: 'A', term: 'Accounting standards', explanation: 'Financial reporting requirements' },
+      { letter: 'T', term: 'Tax', explanation: 'Tax implications and requirements' },
+      { letter: 'E', term: 'Economic outlook', explanation: 'Economic conditions and forecasts' },
+      { letter: 'G', term: 'Governance', explanation: 'Corporate governance requirements' },
+      { letter: 'R', term: 'Risk management requirements', explanation: 'Risk management frameworks' },
+      { letter: 'E', term: 'Experience overseas', explanation: 'International experience and lessons' },
+      { letter: 'A', term: 'Adequacy of capital and solvency', explanation: 'Capital and solvency requirements' },
+      { letter: 'T', term: 'Trends – demographic', explanation: 'Population and demographic changes' },
+      { letter: 'L', term: 'Lifestyle considerations', explanation: 'Changing lifestyle patterns' },
+      { letter: 'I', term: 'Institutional structure', explanation: 'Institutional framework and structure' },
+      { letter: 'S', term: 'Social and cultural trends', explanation: 'Social and cultural changes' },
+      { letter: 'T', term: 'Technology', explanation: 'Technological developments and impacts' },
+      { letter: 'S', term: 'State benefits', explanation: 'Government benefits and social security' }
+    ]
+  },
+  {
+    id: 'fat-sir',
+    acronym: 'FAT SIR',
+    chapter: 'Chapter 12: Capital Project Appraisal',
+    topic: 'Ways of mitigating risks in a capital project',
+    letters: [
+      { letter: 'F', term: 'Further research', explanation: 'Conduct additional research and analysis' },
+      { letter: 'A', term: 'Avoid', explanation: 'Avoid the risk entirely' },
+      { letter: 'T', term: 'Transfer', explanation: 'Transfer the risk to another party' },
+      { letter: 'S', term: 'Share', explanation: 'Share the risk with partners' },
+      { letter: 'I', term: 'Insure', explanation: 'Purchase insurance coverage' },
+      { letter: 'R', term: 'Reduce', explanation: 'Reduce the risk impact or probability' }
+    ]
+  },
+  {
+    id: 'rapid-cost',
+    acronym: 'RAPID COST',
+    chapter: 'Chapter 10: Contract Design',
+    topic: 'Expenses incurred by a product provider',
+    letters: [
+      { letter: 'R', term: 'Renewal administration', explanation: 'e.g. collecting premiums / contributions' },
+      { letter: 'A', term: 'Asset management', explanation: 'Managing investment portfolios' },
+      { letter: 'P', term: 'Profits', explanation: 'Profit margins and distributions' },
+      { letter: 'I', term: 'Initial administration', explanation: 'e.g. setting up new client records' },
+      { letter: 'D', term: 'Design of the contract', explanation: 'Product design and development costs' },
+      { letter: 'C', term: 'Commission', explanation: 'Sales commission and incentives' },
+      { letter: 'O', term: 'Overheads', explanation: 'General business overheads' },
+      { letter: 'S', term: 'Sales/advertising', explanation: 'Marketing and promotional expenses' },
+      { letter: 'T', term: 'Terminal', explanation: 'e.g. paying benefits' }
+    ]
+  },
+  {
+    id: 'pierces-creamer',
+    acronym: 'PIERCES & CREAMeR',
+    chapter: 'Chapter 19: Overseas Markets',
+    topic: 'Factors to consider when investing in emerging markets',
+    letters: [
+      { letter: 'P', term: 'Political stability', explanation: 'Degree of political stability' },
+      { letter: 'I', term: 'Information', explanation: 'Availability and quality of information' },
+      { letter: 'E', term: 'Expected return', explanation: 'Higher expected return due to higher risk' },
+      { letter: 'R', term: 'Regulation', explanation: 'Market regulation quality' },
+      { letter: 'C', term: 'Currency stability', explanation: 'Currency stability and strength' },
+      { letter: 'E', term: 'Extra diversification', explanation: 'Less correlation than larger developed markets' },
+      { letter: 'S', term: 'Small countries', explanation: 'Markets highly influenced by international sentiment' },
+      { letter: 'C', term: 'Communication problems', explanation: 'Language and communication barriers' },
+      { letter: 'R', term: 'Restrictions', explanation: 'Restrictions on foreign investment' },
+      { letter: 'E', term: 'Economic growth', explanation: 'Possibility of high economic growth' },
+      { letter: 'A', term: 'Asset valuation', explanation: 'Current market valuation of assets' },
+      { letter: 'M', term: 'Marketability', explanation: 'Level of marketability' },
+      { letter: 'R', term: 'Range', explanation: 'Range of companies available' }
+    ]
+  }
+];
 
 const AcronymGenerator = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [inputText, setInputText] = useState('');
   const [generatedAcronym, setGeneratedAcronym] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showCA1Library, setShowCA1Library] = useState(false);
 
   const [savedAcronyms, setSavedAcronyms] = useState([]);
 
@@ -200,6 +286,7 @@ const AcronymGenerator = () => {
     )
   );
 
+
   return (
     <div className="min-h-screen p-6" style={{ background: '#16141a' }}>
       <div className="max-w-4xl mx-auto space-y-8">
@@ -296,31 +383,45 @@ const AcronymGenerator = () => {
               />
             </div>
 
-            <button 
-              onClick={generateSmartAcronym} 
-              disabled={!inputText.trim() || isGenerating}
-              className="w-full h-14 rounded-2xl text-base font-semibold text-white flex items-center justify-center gap-3 transition-all duration-200 disabled:opacity-50"
-              style={{
-                background: isGenerating 
-                  ? 'linear-gradient(145deg, #1a1e2e, #2a2e3e)' 
-                  : 'linear-gradient(145deg, #2563eb, #1d4ed8)',
-                boxShadow: isGenerating 
-                  ? 'inset 8px 8px 16px #0e0c10, inset -8px -8px 16px #1e1c23'
-                  : '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
-              }}
-            >
-              {isGenerating ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Analyzing & Creating Acronym...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-5 h-5" />
-                  Generate Smart Acronym
-                </>
-              )}
-            </button>
+            <div className="flex gap-4">
+              <button 
+                onClick={generateSmartAcronym} 
+                disabled={!inputText.trim() || isGenerating}
+                className="flex-1 h-14 rounded-2xl text-base font-semibold text-white flex items-center justify-center gap-3 transition-all duration-200 disabled:opacity-50"
+                style={{
+                  background: isGenerating 
+                    ? 'linear-gradient(145deg, #1a1e2e, #2a2e3e)' 
+                    : 'linear-gradient(145deg, #2563eb, #1d4ed8)',
+                  boxShadow: isGenerating 
+                    ? 'inset 8px 8px 16px #0e0c10, inset -8px -8px 16px #1e1c23'
+                    : '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+                }}
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Analyzing & Creating Acronym...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    Generate Smart Acronym
+                  </>
+                )}
+              </button>
+              
+              <button 
+                onClick={() => setShowCA1Library(!showCA1Library)}
+                className="h-14 px-6 rounded-2xl text-base font-semibold text-white flex items-center justify-center gap-3 transition-all duration-200"
+                style={{
+                  background: 'linear-gradient(145deg, #10b981, #059669)',
+                  boxShadow: '12px 12px 24px #0e0c10, -12px -12px 24px #1e1c23'
+                }}
+              >
+                <BookOpen className="w-5 h-5" />
+                {showCA1Library ? 'Hide' : 'Read'} Acronyms
+              </button>
+            </div>
           </div>
         </div>
 
@@ -439,6 +540,107 @@ const AcronymGenerator = () => {
                   <BookmarkPlus className="w-4 h-4" />
                   Save to Library
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CA1 Acronym Reference Guide - Only show when toggled */}
+        {showCA1Library && (
+          <div 
+            className="p-8 rounded-3xl"
+            style={{
+              background: 'linear-gradient(145deg, #141217, #18151b)',
+              boxShadow: '22px 22px 44px #0e0c10, -22px -22px 44px #1e1c23'
+            }}
+          >
+            <div className="space-y-8">
+              {/* Header */}
+              <div className="flex items-center gap-4 mb-8">
+                <div 
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(145deg, #10b981, #059669)',
+                    boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                  }}
+                >
+                  <BookOpen className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    CA1 Acronym Reference Guide
+                  </h2>
+                  <p className="text-gray-300 leading-relaxed mt-2">
+                    Essential acronyms from CA1 actuarial exam materials for quick reference and study
+                  </p>
+                </div>
+              </div>
+
+              {/* Acronym Cards */}
+              <div className="space-y-6">
+                {ca1AcronymLibrary.map((item) => (
+                  <div 
+                    key={item.id} 
+                    className="p-6 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(145deg, #18151b, #141217)',
+                      boxShadow: '15px 15px 30px #0e0c10, -15px -15px 30px #1e1c23'
+                    }}
+                  >
+                    {/* Acronym Header */}
+                    <div className="mb-6">
+                      <div className="flex items-center gap-4 mb-3">
+                        <div 
+                          className="px-6 py-3 rounded-xl"
+                          style={{
+                            background: 'linear-gradient(145deg, #10b981, #059669)',
+                            boxShadow: '6px 6px 12px #0e0c10, -6px -6px 12px #1e1c23'
+                          }}
+                        >
+                          <span className="font-bold text-white text-xl">{item.acronym}</span>
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-xl text-white mb-2">{item.topic}</h3>
+                      <div 
+                        className="inline-block px-3 py-1 rounded-full text-sm font-medium text-gray-200"
+                        style={{
+                          background: 'linear-gradient(145deg, #141217, #18151b)',
+                          boxShadow: '4px 4px 8px #0e0c10, -4px -4px 8px #1e1c23'
+                        }}
+                      >
+                        {item.chapter}
+                      </div>
+                    </div>
+                    
+                    {/* Letter Breakdown */}
+                    <div className="space-y-3">
+                      {item.letters.map((letter, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-start gap-4 p-4 rounded-xl"
+                          style={{
+                            background: 'linear-gradient(145deg, #1a1d25, #1e212a)',
+                            boxShadow: '8px 8px 16px #0e0c10, -8px -8px 16px #1e1c23'
+                          }}
+                        >
+                          <div 
+                            className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shrink-0"
+                            style={{
+                              background: 'linear-gradient(145deg, #10b981, #059669)',
+                              boxShadow: '4px 4px 8px #0e0c10, -4px -4px 8px #1e1c23'
+                            }}
+                          >
+                            {letter.letter}
+                          </div>
+                          <div className="space-y-1 flex-1">
+                            <h4 className="font-semibold text-lg text-white">{letter.term}</h4>
+                            <p className="text-gray-300 leading-relaxed">{letter.explanation}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
